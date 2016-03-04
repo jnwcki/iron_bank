@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 ACCOUNT_CHOICES = [('s', 'Savings'),
                    ('c', 'Checking')
@@ -15,6 +15,7 @@ class Customer(models.Model):
     state = models.CharField(max_length=2)
     zip_code = models.IntegerField()
     email = models.EmailField()
+    user = models.ForeignKey(User)
 
 
 class Account(models.Model):

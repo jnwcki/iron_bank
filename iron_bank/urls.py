@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from bankapp.views import IndexView
-
+from bankapp.views import IndexView, ProfileView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', IndexView.as_view(), name='index')
+    url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^login/', auth_views.login, name='login'),
+    url(r'^logout/', auth_views.logout_then_login, name='logout'),
+    url(r'^accounts/profile/(?P<pk>\d+)', ProfileView.as_view(), name='user_profile')
 ]
