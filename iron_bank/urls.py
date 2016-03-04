@@ -25,5 +25,5 @@ urlpatterns = [
     url(r'^logout/', auth_views.logout_then_login, name='logout'),
     url(r'^account/profile/', ProfileView.as_view(), name='user_profile'),
     url(r'^account/manageaccount/(?P<pk>\d+)', MoneyView.as_view(), name='manage'),
-    url(r'^account/transactions/', TransactionView.as_view(), name='transaction')
+    url(r'^account/transactions/(?P<pk>\d+)', TransactionView.as_view(), name='transaction')
 ]

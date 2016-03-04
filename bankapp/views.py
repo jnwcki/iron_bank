@@ -34,7 +34,7 @@ class ProfileView(RestrictedAccessMixin, View):
     def get(self, request):
         customer_profile = Customer.objects.get(user=self.request.user)
         customer_account = Account.objects.filter(acctxref__customer=customer_profile)
-
+        # customer_transaction = Transaction(account=customer_account)
         return render(request, 'bankapp/customer_list.html', {'profile': customer_profile,
                                                               'account': customer_account
                                                               }
@@ -47,4 +47,8 @@ class MoneyView(DetailView):
 
 class TransactionView(CreateView):
     model = Transaction
-    fields = ['amount', 'description']
+    fields = ['amount', 'description', 'account']
+
+
+    def get_success_url(self):
+        return reverse('index')

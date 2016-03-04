@@ -20,6 +20,7 @@ class Customer(models.Model):
     def __str__(self):
         return "{} {}".format(self.first_name, self.last_name)
 
+
 class Account(models.Model):
     account_type = models.CharField(max_length=30, choices=ACCOUNT_CHOICES)
     description = models.CharField(max_length=200)
@@ -28,6 +29,7 @@ class Account(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.description, self.account_type)
+
 
 class AcctXref(models.Model):
     customer = models.ForeignKey(Customer)
