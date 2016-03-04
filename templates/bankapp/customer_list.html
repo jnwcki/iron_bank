@@ -16,10 +16,12 @@
     <ul class="collection with-header">
         {% for foo in account %}
 
-        <li class="collection-header"><h4>Account: {{ foo.description }}</h4></li>
+        <li class="collection-header"><h4><a href="{% url 'manage' foo.pk %}">Account: {{ foo.description }}</a></h4></li>
             <li class="collection-item">Account Type: {{ foo.get_account_type_display }}</li>
             <li class="collection-item">Current Balance: {{ foo.current_balance }}</li>
             <li class="collection-item">Beginning Balance: {{ foo.beginning_balance }}</li>
+            <li class="collection-item"><a href="{% url 'transaction' %}">Transactions</a></li>
+
         {% endfor %}
 
     </ul>

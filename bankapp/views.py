@@ -4,9 +4,9 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render
 
 # Create your views here.
-from django.views.generic import TemplateView, CreateView, DetailView, ListView, View
+from django.views.generic import TemplateView, CreateView, DetailView, ListView, View, FormView
 
-from bankapp.models import Customer, Account, AcctXref
+from bankapp.models import Customer, Account, AcctXref, Transaction
 
 
 class RestrictedAccessMixin:
@@ -30,13 +30,21 @@ class SignUp(CreateView):
 
 
 class ProfileView(RestrictedAccessMixin, View):
-    pass
+
     def get(self, request):
-         customer_profile = Customer.objects.get(user=self.request.user)
-         customer_account = Account.objects.filter(acctxref__customer=customer_profile)
-        #if self.request.user.id:
-         #   user_urls = Url.objects.filter(user=self.request.user)
-         return render(request, 'bankapp/customer_list.html', {'profile': customer_profile,
-                                                               'account': customer_account
-                                                               }
-                       )
+        customer_profile = Customer.objects.get(user=self.request.user)
+        customer_account = Account.objects.filter(acctxref__customer=customer_profile)
+
+        return render(request, 'bankapp/customer_list.html', {'profile': customer_profile,
+                                                              'account': customer_account
+                                                              }
+                      )
+
+
+class MoneyView(DetailView):
+    model = Account
+
+
+class TransactionView(CreateView):
+    model = Transaction
+    fields = ['amount', 'description']
