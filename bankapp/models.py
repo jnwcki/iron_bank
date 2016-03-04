@@ -17,6 +17,8 @@ class Customer(models.Model):
     email = models.EmailField()
     user = models.ForeignKey(User)
 
+    def __str__(self):
+        return "{} {}".format(self.first_name, self.last_name)
 
 class Account(models.Model):
     account_type = models.CharField(max_length=30, choices=ACCOUNT_CHOICES)
@@ -24,6 +26,8 @@ class Account(models.Model):
     current_balance = models.DecimalField(max_digits=10, decimal_places=2)
     beginning_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
+    def __str__(self):
+        return "{} {}".format(self.description, self.account_type)
 
 class AcctXref(models.Model):
     customer = models.ForeignKey(Customer)
@@ -34,3 +38,6 @@ class Transaction(models.Model):
     account = models.ForeignKey(Account)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=200)
+
+    def __str__(self):
+        return "{} {}".format(self.description, self.amount)

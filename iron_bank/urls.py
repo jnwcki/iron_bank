@@ -21,7 +21,7 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', IndexView.as_view(), name='index'),
-    url(r'^login/', auth_views.login, name='login'),
+    url(r'^accounts/login/', auth_views.login, name='login'),
     url(r'^logout/', auth_views.logout_then_login, name='logout'),
-    url(r'^accounts/profile/(?P<pk>\d+)', ProfileView.as_view(), name='user_profile')
+    url(r'^account/profile/', ProfileView.as_view(), name='user_profile')
 ]

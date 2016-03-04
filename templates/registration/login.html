@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <div>
+    <h2 class="header center orange-text">{% block center_text %}Please Log In To Continue{% endblock center_text %}</h2>
+  </div>
+
     <div class="container">
-        <form action="" method="post">
+        <form action="submit" method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="submit" value="Login" class="btn-large waves-effect waves-light orange">
+            <input type="submit" value="login" class="btn-large waves-effect waves-light orange">
         </form>
     </div>
 {% endblock %}
