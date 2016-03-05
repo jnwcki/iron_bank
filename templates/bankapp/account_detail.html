@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    {{ account.description }}
+    <div class="container">
+    <div><h2>Account {{ account.description }} Details</h2></div>
+        <ul>
+            <li>Account {{ account.description }}</li>
+            <li>Type {{ account.get_account_type_display }}</li>
+            <li>Current Balance {{ account.current_balance }}</li>
+            <li>Beginning Balance {{ account.beginning_balance }}</li>
+            <li>Account Number: {{ account.pk }}</li>
+
+        </ul>
+    </div>
 
 {% endblock %}

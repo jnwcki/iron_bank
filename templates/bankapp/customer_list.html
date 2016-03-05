@@ -13,18 +13,17 @@
       </ul>
     </div>
     <div>
-    <ul class="collection with-header">
         {% for foo in account %}
+            <ul class="collection with-header">
 
         <li class="collection-header"><h4><a href="{% url 'manage' foo.pk %}">Account: {{ foo.description }}</a></h4></li>
             <li class="collection-item">Account Type: {{ foo.get_account_type_display }}</li>
             <li class="collection-item">Current Balance: {{ foo.current_balance }}</li>
-            <li class="collection-item">Beginning Balance: {{ foo.beginning_balance }}</li>
-            <li class="collection-item"><a href="{% url 'transaction' foo.pk %}">Transactions</a></li>
+            <li class="collection-item"><a href="{% url 'transaction' foo.pk %}">Add Transaction</a></li>
 
+            </ul>
         {% endfor %}
 
-    </ul>
         </div>
 </span>
 </div>
