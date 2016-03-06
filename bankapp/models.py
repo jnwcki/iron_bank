@@ -41,6 +41,10 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=200)
     destination_account_id = models.IntegerField(null=True, blank=True)
+    transaction_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-transaction_time"]
 
     def __str__(self):
         return "{} {}".format(self.description, self.amount)

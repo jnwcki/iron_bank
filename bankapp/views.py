@@ -53,8 +53,8 @@ class TransferView(View):
 class TransactionView(CreateView):
     template_name = 'bankapp/transaction_form.html'
     model = Transaction
-    fields = ['amount', 'description', 'account']
-
+    fields = ['amount', 'description', 'account', 'destination_account_id']
+    """
     def post(self, form):
         to_acct = form.POST.get('to_acct')
         to_desc = form.POST.get('description')
@@ -62,7 +62,7 @@ class TransactionView(CreateView):
         if to_acct:
             Transaction.objects.create(account_id=to_acct, description=to_desc, amount=to_amt)
         return super(TransactionView, self).post(self, **form)
-
+    """
     def get_success_url(self):
         account_var = Account.objects.get(pk=self.kwargs['pk'])
         my_trans_variable = Transaction.objects.filter(account=account_var)
