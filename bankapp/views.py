@@ -5,6 +5,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.views.generic import TemplateView, CreateView, DetailView, ListView, View, FormView
+from django.views.generic.edit import ProcessFormView
+
 from bankapp.models import Customer, Account, AcctXref, Transaction
 
 
@@ -42,10 +44,24 @@ class ProfileView(RestrictedAccessMixin, View):
 class MoneyView(DetailView):
     model = Account
 
+class TransferView(View):
+    def get(self):
+        pass
+    def post(self):
+        pass
 
 class TransactionView(CreateView):
+    template_name = 'bankapp/transaction_form.html'
     model = Transaction
     fields = ['amount', 'description', 'account']
+
+    def post(self, form):
+        to_acct = form.POST.get('to_acct')
+        to_desc = form.POST.get('description')
+        to_amt = (- form.POST.get('amount'))
+        if to_acct:
+            Transaction.objects.create(account_id=to_acct, description=to_desc, amount=to_amt)
+        return super(TransactionView, self).post(self, **form)
 
     def get_success_url(self):
         account_var = Account.objects.get(pk=self.kwargs['pk'])

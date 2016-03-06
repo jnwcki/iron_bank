@@ -2,7 +2,8 @@
 
 {% block content %}
     <div class="container">
-    <h3>Account Transactions</h3>
+    <div><h4>Account Transactions</h4></div>
+    <div><a href="{% url 'user_profile' %}">Back to user profile</a></div>
     {% for item in transaction_list %}
     <ul class="collection with-header">
         <li class="collection-item"><a href=""></a>Description: {{ item.description }}</li>
