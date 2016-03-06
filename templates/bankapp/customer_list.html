@@ -20,6 +20,8 @@
             <li class="collection-item">Account Type: {{ foo.get_account_type_display }}</li>
             <li class="collection-item">Current Balance: {{ foo.current_balance }}</li>
             <li class="collection-item"><a href="{% url 'transaction' foo.pk %}">Add Transaction</a></li>
+            <li class="collection-item"><a href="{% url 'transdetail' foo.pk %}">Transaction Detail</a></li>
+            
 
             </ul>
         {% endfor %}

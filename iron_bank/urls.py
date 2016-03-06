@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from bankapp.views import IndexView, ProfileView, MoneyView, TransactionView
+from bankapp.views import IndexView, ProfileView, MoneyView, TransactionView, TransactionDetailView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^logout/', auth_views.logout_then_login, name='logout'),
     url(r'^account/profile/', ProfileView.as_view(), name='user_profile'),
     url(r'^account/manageaccount/(?P<pk>\d+)', MoneyView.as_view(), name='manage'),
-    url(r'^account/transactions/(?P<pk>\d+)', TransactionView.as_view(), name='transaction')
+    url(r'^account/transactions/(?P<pk>\d+)', TransactionView.as_view(), name='transaction'),
+    url(r'^account/transactiondetail/(?P<pk>\d+)', TransactionDetailView.as_view(), name='transdetail')
 ]

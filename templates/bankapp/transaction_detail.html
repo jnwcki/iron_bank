@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+    <h3>Account Transactions</h3>
+    {% for item in transaction_list %}
+    <ul class="collection with-header">
+        <li class="collection-item"><a href=""></a>Description: {{ item.description }}</li>
+        <li class="collection-item">Amount: {{ item.amount }}</li>
+        <li class="collection-item">Account: {{ item.account }}</li>
+    </ul>
+    {% endfor %}
+    </div>
+
+{% endblock %}
