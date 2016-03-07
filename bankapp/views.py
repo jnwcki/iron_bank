@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.views.generic import TemplateView, CreateView, DetailView, ListView, View, FormView
@@ -15,7 +15,7 @@ class RestrictedAccessMixin:
         return self.model.objects.filter()
 
 
-class IndexView(TemplateView):
+class IndexView(RestrictedAccessMixin, TemplateView):
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
@@ -30,39 +30,53 @@ class SignUp(CreateView):
         return reverse('login')
 
 
+class CustomerInfoForm(CreateView):
+    template_name = 'bankapp/customer_info_form.html'
+    model = Customer
+    fields = ['first_name', 'last_name', 'middle_initial',
+              'street', 'city', 'state', 'zip_code', 'email'
+              ]
+
+    def form_valid(self, form):
+        form_object = form.save(commit=False)
+        form_object.user = self.request.user
+        form.save()
+
+    def get_success_url(self):
+        return reverse('user_profile')
+
+
 class ProfileView(RestrictedAccessMixin, View):
 
     def get(self, request):
-        customer_profile = Customer.objects.get(user=self.request.user)
-        customer_account = Account.objects.filter(acctxref__customer=customer_profile)
-        return render(request, 'bankapp/customer_list.html', {'profile': customer_profile,
-                                                              'account': customer_account
-                                                              }
-                      )
+        if self.request.user:
+            customer_profile = Customer.objects.get(user=self.request.user)
+            customer_account = Account.objects.filter(acctxref__customer=customer_profile)
+            return render(request, 'bankapp/customer_list.html', {'profile': customer_profile,
+                                                                  'account': customer_account
+                                                                  }
+                          )
+        else:
+            return reverse('custinfo')
 
 
-class MoneyView(DetailView):
+class MoneyView(RestrictedAccessMixin, DetailView):
     model = Account
 
-class TransferView(View):
-    def get(self):
-        pass
-    def post(self):
-        pass
 
-class TransactionView(CreateView):
+class TransactionView(RestrictedAccessMixin, CreateView):
     template_name = 'bankapp/transaction_form.html'
     model = Transaction
     fields = ['amount', 'description', 'account', 'destination_account_id']
-    """
-    def post(self, form):
+
+    def form_valid(self, form):
         to_acct = form.POST.get('to_acct')
         to_desc = form.POST.get('description')
         to_amt = (- form.POST.get('amount'))
         if to_acct:
             Transaction.objects.create(account_id=to_acct, description=to_desc, amount=to_amt)
         return super(TransactionView, self).post(self, **form)
-    """
+
     def get_success_url(self):
         account_var = Account.objects.get(pk=self.kwargs['pk'])
         my_trans_variable = Transaction.objects.filter(account=account_var)
@@ -75,7 +89,7 @@ class TransactionView(CreateView):
         return reverse('user_profile')
 
 
-class TransactionDetailView(TemplateView):
+class TransactionDetailView(RestrictedAccessMixin, TemplateView):
     template_name = 'bankapp/transaction_detail.html'
     model = Transaction
 

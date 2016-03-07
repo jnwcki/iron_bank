@@ -9,6 +9,10 @@
         <li class="collection-item"><a href=""></a>Description: {{ item.description }}</li>
         <li class="collection-item">Amount: {{ item.amount }}</li>
         <li class="collection-item">Account: {{ item.account }}</li>
+        <li class="collection-item">Type: {{ item.get_transaction_type_display }}</li>
+        <li class="collection-item">Time: {{ item.transaction_time }}</li>
+        <li class="collection-item">Recieving Account: {{ item.destination_account_id }}</li>
+
     </ul>
     {% endfor %}
     </div>
