@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% block content %}
 
-{% if user.is_authenticated %}
+      <div class="jumbotron">
+        <h1>Welcome to the iron bank</h1>
+        <p>We are the premier banking institution in Braavos</p>
+        <p>
+          <a class="btn btn-lg btn-primary" href="{% url 'signup' %}" role="button">Sign Up &raquo;</a>
+        </p>
+      </div>
 
-{% else %}
-
-{% block center_text %}Welcome To The Iron Bank{% endblock center_text %}
-{% block center_desc %}Please log in or create an account to continue{% endblock center_desc %}
-{% block button %}Log In{% endblock button %}
-
-{% endif %}
+{% endblock %}
