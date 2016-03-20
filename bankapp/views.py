@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, CreateView, DetailView, ListView
 
-from bankapp.forms import NewUserCreation
+from bankapp.forms import NewUserCreation, TransactionForm
 from bankapp.models import Account, Transaction
 
 
@@ -13,14 +13,19 @@ class RestrictedAccessMixin:
         return self.model.objects.filter(account__customer=self.request.user)
 
 
-class IndexView(RestrictedAccessMixin, TemplateView):
+class IndexView(TemplateView):
     template_name = 'index.html'
 
 
 class SignUp(CreateView):
     model = User
     form_class = NewUserCreation
-    # Need to call a form_valid here to create the user's account
+
+    def form_valid(self, form):
+        user_form = form.save()
+        new_account_name = form.cleaned_data.get('account_name')
+        Account.objects.create(account_name=new_account_name, customer=user_form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('login')
@@ -31,11 +36,16 @@ class ProfileView(RestrictedAccessMixin, ListView):
     model = Transaction
 
 
-class TransactionView(RestrictedAccessMixin, CreateView):
-    model = Transaction
-    fields = ['amount', 'description', 'account', 'transaction_type',
-              'destination_account_id'
-              ]
+class TransactionView(CreateView):
+    # model = Transaction
+    template_name = 'bankapp/transaction_form.html'
+    form_class = TransactionForm
+
+    def get_form_kwargs(self):
+            kwargs = super(TransactionView, self).get_form_kwargs()
+            kwargs['user'] = self.request.user
+            return kwargs
+
 
     #def form_valid(self, form):
         #new_trans = form.save()
