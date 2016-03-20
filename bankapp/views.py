@@ -37,7 +37,6 @@ class ProfileView(RestrictedAccessMixin, ListView):
 
 
 class TransactionView(CreateView):
-    # model = Transaction
     template_name = 'bankapp/transaction_form.html'
     form_class = TransactionForm
 
@@ -46,22 +45,44 @@ class TransactionView(CreateView):
             kwargs['user'] = self.request.user
             return kwargs
 
+    def form_valid(self, form):
+        new_transaction = form.save(commit=False)
+        account_var = Account.objects.get(customer=self.request.user)
+        trans_variable = Transaction.objects.filter(account=account_var)
+        add_money = 0
+        for item in trans_variable:
+            add_money += item.amount
 
-    #def form_valid(self, form):
-        #new_trans = form.save()
-           # Transaction.objects.create(account_id=to_acct, description=to_desc, amount=to_amt)
-        #return super(TransactionView, self)
+        if new_transaction.transaction_type == 'W':
+            new_transaction.amount = -new_transaction.amount
+        elif new_transaction.transaction_type == 'T':
+            new_transaction.amount = -new_transaction.amount
+            to_acct_add_money = 0
+            to_acct_amts = Transaction.objects.filter(account=new_transaction.destination_account_id)
+
+            for item in to_acct_amts:
+                to_acct_add_money += item.amount
+            to_acct_add_money -= new_transaction.amount
+            # Create transfer on foreign account
+            Transaction.objects.create(account=new_transaction.destination_account_id,
+                                       amount=-new_transaction.amount,
+                                       description=new_transaction.description,
+                                       transaction_type='T',
+                                       destination_account_id=account_var,
+                                       new_balance=to_acct_add_money)
+
+        new_transaction.new_balance = add_money + new_transaction.amount
+        new_transaction.save()
+
+        # Overdraft Fee
+        if new_transaction.new_balance < 0:
+            Transaction.objects.create(account=account_var,
+                                       amount=-35,
+                                       description="Overdraft Fee",
+                                       transaction_type='F',
+                                       new_balance=new_transaction.new_balance-35)
+        return super().form_valid(form)
 
     def get_success_url(self):
-        """
-        account_var = Account.objects.get(pk=self.kwargs['pk'])
-        my_trans_variable = Transaction.objects.filter(account=account_var)
-        add_money = 0
-
-        for item in my_trans_variable:
-            add_money += item.amount
-        account_var.current_balance = add_money + account_var.beginning_balance
-        account_var.save()
-        """
         return reverse('user_profile')
 

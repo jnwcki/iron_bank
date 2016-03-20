@@ -40,7 +40,6 @@
               <li class="active"><a href="{% url 'user_profile' %}">Welcome {{ user }}</a></li>
                 <li><a href="{% url 'logout' %}">Log Out</a></li>
                 <li><a href="{% url 'transaction' %}">Create Transaction</a></li>
-                <li><a href="{% url 'create_account' %}">Create Account</a></li>
 
                 {% else %}
                 <li class="active"><a href="{% url 'index' %}">Home</a></li>
