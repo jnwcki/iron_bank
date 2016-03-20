@@ -1,9 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, CreateView, DetailView, ListView
-
+from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView, CreateView, ListView
 from bankapp.forms import NewUserCreation, TransactionForm
 from bankapp.models import Account, Transaction
 
@@ -48,12 +46,17 @@ class TransactionView(CreateView):
 
     def form_valid(self, form):
         new_transaction = form.save(commit=False)
-        if new_transaction.transaction_type == 'W' or 'D':
+        if new_transaction.transaction_type == 'W':
             if new_transaction.destination_account_id:
                 return HttpResponseRedirect(reverse('invalid_transaction', kwargs={'error': '1'}))
-        if new_transaction.transaction_type == "T":
-            if not new_transaction.destination_account_id:
+
+        if new_transaction.transaction_type == 'D':
+             if new_transaction.destination_account_id:
                 return HttpResponseRedirect(reverse('invalid_transaction', kwargs={'error': '2'}))
+
+        elif new_transaction.transaction_type == "T":
+            if not new_transaction.destination_account_id:
+                return HttpResponseRedirect(reverse('invalid_transaction', kwargs={'error': '3'}))
 
         account_var = Account.objects.get(customer=self.request.user)
         new_transaction.account = account_var
@@ -103,9 +106,12 @@ class InvalidView(TemplateView):
         context = super().get_context_data(**kwargs)
         error = self.kwargs.get('error')
         if error == '1':
-            context['message'] = """You cannot withdraw or deposit to
+            context['message'] = """You cannot withdraw from
                                     someone else's account"""
         elif error == '2':
+            context['message'] = """You cannot deposit to someone else's account"""
+
+        elif error == '3':
             context['message'] = """You must specify a destination account when
                                     selecting the transfer option"""
         return context

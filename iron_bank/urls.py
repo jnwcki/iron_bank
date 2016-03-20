@@ -24,7 +24,6 @@ urlpatterns = [
     url(r'^accounts/login/', auth_views.login, name='login'),
     url(r'^logout/', auth_views.logout_then_login, name='logout'),
     url(r'^account/profile/', ProfileView.as_view(), name='user_profile'),
-    url(r'^account/create/', SignUp.as_view(), name='create_account'),
     url(r'^account/transactions/$', TransactionView.as_view(), name='transaction'),
     url(r'^signup/', SignUp.as_view(), name='signup'),
     url(r'^invalid/(?P<error>\d+)', InvalidView.as_view(), name='invalid_transaction')

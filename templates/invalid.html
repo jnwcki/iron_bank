@@ -1,4 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-{{ message }}
+<div>
+<h2>Sorry</h2>
+    <h3>{{ message }}</h3>
+</div>
+    <br>
+<p>
+  <a class="btn btn-lg btn-primary" href="{% url 'transaction' %}" role="button">Create A New Transaction &raquo;</a>
+</p>
+
 {% endblock %}
