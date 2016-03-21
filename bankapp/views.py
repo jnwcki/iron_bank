@@ -40,6 +40,7 @@ class ProfileView(RestrictedAccessMixin, ListView):
         context['balance'] = Transaction.objects.first()
         return context
 
+
 class TransactionDetailView(RestrictedAccessMixin, DetailView):
     model = Transaction
 
