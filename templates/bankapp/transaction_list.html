@@ -1,33 +1,35 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="panel panel-default">
+<h1>Current Balance: ${{ balance.new_balance }}</h1>
+    <div class="panel panel-default">
   <!-- Default panel contents -->
-  <div class="panel-heading"><b>{{  g}}Transactions</b></div>
+  <div class="panel-heading"><b>Transactions</b></div>
 
   <!-- Table -->
   <table class="table">
     <tr>
-        <th>Account</th>
+        <th>Detail</th>
         <th>Amount</th>
         <th>Type</th>
         <th>Description</th>
         <th>To/From Account</th>
-        <th>To/From Account Owner</th>
         <th>Time</th>
         <th>Balance</th>
     </tr>
        {% for trans in transaction_list %}
-      <tr>
-      <td>{{ trans.account.account_name }}</td>
-           <td>{{ trans.amount }}</td>
-      <td>{{ trans.get_transaction_type_display }}</td>
-      <td>{{ trans.description }}</td>
-      <td>{{ trans.destination_account_id }}</td>
-      <td>{{ trans.destination_account_id.customer }}</td>
-      <td>{{ trans.transaction_time }}</td>
-        <td>{{ trans.new_balance }}</td>
-      </tr>
+
+
+    <tr><td><a href="{% url 'trans_detail' trans.id %}" >Transaction Detail</a></td>
+
+            <td>{{ trans.amount }}</td>
+            <td>{{ trans.get_transaction_type_display }}</td>
+            <td>{{ trans.description }}</td>
+            <td>{{ trans.destination_account_id }}</td>
+            <td>{{ trans.transaction_time }}</td>
+            <td>{{ trans.new_balance }}</td>
+  </tr>
+
     {% endfor %}
 
   </table>

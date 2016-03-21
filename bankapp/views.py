@@ -1,7 +1,8 @@
+from decimal import Decimal
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView, CreateView, ListView
+from django.views.generic import TemplateView, CreateView, ListView, DetailView
 from bankapp.forms import NewUserCreation, TransactionForm
 from bankapp.models import Account, Transaction
 
@@ -34,8 +35,17 @@ class ProfileView(RestrictedAccessMixin, ListView):
     # calls transaction_list.html
     model = Transaction
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['balance'] = Transaction.objects.first()
+        return context
+
+class TransactionDetailView(RestrictedAccessMixin, DetailView):
+    model = Transaction
+
 
 class TransactionView(CreateView):
+    # View for creating new transaction
     template_name = 'bankapp/transaction_form.html'
     form_class = TransactionForm
 
@@ -70,17 +80,17 @@ class TransactionView(CreateView):
         elif new_transaction.transaction_type == 'T':
             new_transaction.amount = -new_transaction.amount
             to_acct_add_money = 0
-            to_acct_amts = Transaction.objects.filter(account=new_transaction.destination_account_id)
+            to_acct_amts = Transaction.objects.filter(account_id=new_transaction.destination_account_id)
 
             for item in to_acct_amts:
                 to_acct_add_money += item.amount
             to_acct_add_money -= new_transaction.amount
             # Create transfer on foreign account
-            Transaction.objects.create(account=new_transaction.destination_account_id,
+            Transaction.objects.create(account_id=new_transaction.destination_account_id,
                                        amount=-new_transaction.amount,
                                        description=new_transaction.description,
                                        transaction_type='T',
-                                       destination_account_id=account_var,
+                                       destination_account_id=account_var.pk,
                                        new_balance=to_acct_add_money)
 
         new_transaction.new_balance = add_money + new_transaction.amount
@@ -88,11 +98,16 @@ class TransactionView(CreateView):
 
         # Overdraft Fee
         if new_transaction.new_balance < 0:
-            Transaction.objects.create(account=account_var,
-                                       amount=-35,
-                                       description="Overdraft Fee",
-                                       transaction_type='F',
-                                       new_balance=new_transaction.new_balance-35)
+            if new_transaction.transaction_type != 'D':
+                fee_percent = Decimal(0.04)
+                set_fee = Decimal(15)
+                fee = -new_transaction.amount * fee_percent + set_fee
+                Transaction.objects.create(account=account_var,
+                                           amount=-fee,
+                                           description="Overdraft Fee",
+                                           transaction_type='F',
+                                           new_balance=new_transaction.new_balance - fee
+                                           )
         return super().form_valid(form)
 
     def get_success_url(self):
